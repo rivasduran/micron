@@ -408,7 +408,7 @@ function my_action_cron_actualizar_productos() {
                         $momentaneo = [];
                         $momentaneo = [
                             'id'           => $id_producc,
-                            "manage_stock" => true,
+                            //"manage_stock" => true,
                         ];
 
                         //DATOS CUSTOM

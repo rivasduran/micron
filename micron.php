@@ -517,7 +517,7 @@ function solo_modificados_invu()
                     $momentaneo = [];
                     $momentaneo = [
                         'id'           => $id_producc,
-                        "manage_stock" => true,
+                        //"manage_stock" => true,
                     ];
 
                     //DATOS CUSTOM
@@ -689,8 +689,15 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
     if(count($producto_padre) <= 0 ){
     	return;
     }
+
+    //PRUEBA.
+
+    if($key->codigo == "M2880"){
+        return;
+    }
     
     if (count($mi_producto2) > 0) {
+        /*
 
         //echo "<h1>Si estamos en esta seccion del padre <---</h1>";
         $id_producc = end($mi_producto2); $id_producc = $id_producc->post_id;
@@ -756,6 +763,18 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 				//GUARDAMOS EL COLOR DENTRO DE NUESTROS COLORES VIEJOS
 				array_push($atributos_Viejos_color, $key_agrupacion->groups->desc_autor);
 
+
+                //$momentaneoccl = array_unique($atributos_Viejos_color);
+                //array_count_values
+                $momentaneoccl = array_unique($atributos_Viejos_color);
+
+                $atributos_Viejos_color = [];
+
+                foreach($momentaneoccl as $keyss => $valor){
+                    echo "<h1>EL color es: {$valor}</h1>";
+                    array_push($atributos_Viejos_color, $valor);
+                }
+
 				//REVISAMOS EL COLOR
 				$datos_color = [
 			      "name"=> "Color",
@@ -764,6 +783,10 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 			      "variation"=> true,
 			      "options"=> array_unique($atributos_Viejos_color)
 				];
+
+                print_r($atributos_Viejos_color);
+
+                //echo "<h1>============> {$id_padre} ".json_encode(array_unique($atributos_Viejos_color))."</h1>";
 				
 				array_push($datap["attributes"], $datos_color);
 			//}	
@@ -777,6 +800,14 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 
 				//GUARDAMOS EL COLOR DENTRO DE NUESTROS COLORES VIEJOS
 				array_push($atributos_Viejos_talla, $key_agrupacion->groups->desc_coleccion);
+
+                $momentaneoccl = array_unique($atributos_Viejos_talla);
+                
+                $atributos_Viejos_talla = [];
+
+                foreach($momentaneoccl as $keyss => $valor){
+                    array_push($atributos_Viejos_talla, $valor);
+                }
 
 
 				//REVISAMOS EL COLOR
@@ -826,6 +857,7 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
         //echo "<h1>Pasamos por estos: </h1>";
         //print_r($momentaneo);//NOS QUEDAMOS EN ESTE PUNTO!**
         //}
+        */
     }else{
 
         //ID DEL PADRE
@@ -845,6 +877,9 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 
             //REVICEMOS LOS ATRIBUTOS QUE TIENE EL PRODUCTO PARA NO PERDERLOS
             $t34 = $woocommerce->get('products/'.$id_padre.'/variations');
+
+
+            echo "<h1>Consultando este padre: {$id_padre} SKU HIJO:{$key->codigo}</h1>";
 
             $atributos_Viejos_color = [];
             $atributos_Viejos_talla = [];
@@ -880,14 +915,23 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 					//GUARDAMOS EL COLOR DENTRO DE NUESTROS COLORES VIEJOS
 					array_push($atributos_Viejos_color, $key_agrupacion->groups->desc_autor);
 
+                    $momentaneoccl = array_unique($atributos_Viejos_color);
 
+                    $atributos_Viejos_color = [];
+
+                    foreach($momentaneoccl as $keyss => $valor){
+
+                        echo "<h1>EL COLOR ES: {$valor} PADRE: {$id_padre}</h1>";
+                        array_push($atributos_Viejos_color, $valor);
+                    }
+                    
 					//REVISAMOS EL COLOR
 					$datos_color = [
 				      "name"=> "Color",
 				      "position"=> 0,
 				      "visible" => true,
 				      "variation"=> true,
-				      "options"=> array_unique($atributos_Viejos_color)
+				      "options"=> $atributos_Viejos_color
 					];
 					
 
@@ -901,6 +945,14 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 					//GUARDAMOS EL COLOR DENTRO DE NUESTROS COLORES VIEJOS
 					array_push($atributos_Viejos_talla, $key_agrupacion->groups->desc_coleccion);
 
+                    $momentaneoccl = array_unique($atributos_Viejos_talla);
+                
+                    $atributos_Viejos_talla = [];
+
+                    foreach($momentaneoccl as $keyss => $valor){
+                        array_push($atributos_Viejos_talla, $valor);
+                    }
+
 
 					//REVISAMOS EL COLOR
 					$datos_color = [
@@ -908,7 +960,7 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 				      "position"=> 0,
 				      "visible" => true,
 				      "variation"=> true,
-				      "options"=> array_unique($atributos_Viejos_talla)
+				      "options"=> $atributos_Viejos_talla
 					];
 					
 
@@ -932,7 +984,7 @@ function variaciones_invu_pos( $nombre_producto, $descripcion_producto, $precio_
 			            'regular_price'     => $key->precioSugerido,
 						'sku'			    => $key->codigo,
                         'stock_quantity'    => $key->checkStock,
-                        'manage_stock'      => true,
+                        'manage_stock'      => false,
 			            'attributes'        => []
 			        ];
 
@@ -1166,7 +1218,7 @@ function todo_invu_woocommerce()
                     $momentaneo = [];
                     $momentaneo = [
                         'id'           => $id_producc,
-                        "manage_stock" => true,
+                        //"manage_stock" => true,
                     ];
 
                     //DATOS CUSTOM
