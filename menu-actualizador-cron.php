@@ -17,6 +17,9 @@ function menu_cron_invu() {
 	//SECCION DE CONFIGURACIONES
 	//add_submenu_page( 'api_invu', 'Ajustes', 'Ajustes', 'manage_options', 'mis-ajustes-api', 'ajustes_api_invu' );
 	add_submenu_page( 'cron_invu', 'Actualizar', 'Actualizar', 'manage_options', 'actualizar_manual_invu', 'actualizar_manual_invu' );
+
+	//SECCION DE METODOS DE PAGO
+	add_submenu_page( 'cron_invu', 'Metodos Pago', 'Metodos Pago', 'manage_options', 'metodos_pago_woo', 'metodos_pago_woo' );
 }
 
 function cron_invu_2(){

@@ -26,6 +26,9 @@ $consultas_respuestas_todo = $wpdb->prefix . 'consultas_respuestas_todo';
 //productos_variables
 $productos_variables        = $wpdb->prefix . 'productos_variables';
 
+//TABLA PARA VER LOS METODOS DE PAGO
+$metodos_de_pago_invu       = $wpdb->prefix . 'metodos_de_pago_invu';
+
 function instalar_tabla_cron()
 {
     ///echo "<h1>Pasa por el install</h1>";
@@ -34,6 +37,7 @@ function instalar_tabla_cron()
     global $consultas_respuestas;
     global $consultas_respuestas_todo;
     global $productos_variables;
+    global $metodos_de_pago_invu;
 
     //AQUI ESTAN LAS TABLAS DE LA DB
     global $tabla_cron;
@@ -87,6 +91,32 @@ function instalar_tabla_cron()
     ) $charset_collate;";
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta($productos_variables);
+
+    //METODOS DE PAGO
+    // "id": "7",
+    // "nombre": "Efectivo",
+    // "id_tipo_pago": "1",
+    // "desc_tipopago": "EFECTIVO",
+    // "id_fiscal": null,
+    // "emitir_fiscal": true,
+    // "pago_internacional": false,
+    // "id_tipo_pos": null,
+    // "tipo_pos_desc": ""
+    $metodos_de_pago_invu = "CREATE TABLE $metodos_de_pago_invu (
+        id 		mediumint(9) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_invu 		        varchar(100),
+        id_woo 		            varchar(100),
+        nombre                  varchar(100),
+        id_tipo_pago            varchar(100),
+        desc_tipopago           varchar(100),
+        id_fiscal               BOOLEAN,
+        emitir_fiscal           BOOLEAN,
+        pago_internacional      BOOLEAN,
+        id_tipo_pos             BOOLEAN,
+        tipo_pos_desc           varchar(100)
+    ) $charset_collate;";
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($metodos_de_pago_invu);
 
     add_option('varsion_tabla_cron', $varsion_tabla_cron);
 
@@ -176,6 +206,8 @@ function insertar_tabla_cron()
             )
         );
     }
+
+
 }
 
 function cron2_update_db_check()

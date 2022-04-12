@@ -18,6 +18,10 @@ include "menu-actualizador-cron.php";
 //ACTUALIZAR MANUAL
 include "actualizar_manual_invu.php";
 
+//METODOS DE PAGO
+include "orders/metodos_de_pago.php";
+include "orders/envio_de_ordenes.php";
+
 $mi_url_web = get_site_url();
 
 function insertar_productos_web_cr()
