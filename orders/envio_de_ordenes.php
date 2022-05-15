@@ -30,6 +30,11 @@ function sen_order_api_invu_pos($order_get_id)
     $status            = $order->get_status();
     $send_api_erp_invu = $order->get_meta('send_api_erp_invu', true);
 
+
+    if($status != "processing"){
+        return false;
+    }
+
     $enviar = "si";
 
     $enviado_manual = "";
@@ -139,6 +144,11 @@ function sen_order_api_invu_pos($order_get_id)
             //print_r($responseData2);
 
 
+            if(isset($_GET['orden_prueba'])){
+                //print_r($responseData2);
+            }
+
+
 
             // if ($responseData2 == 'Ok') {
             //     update_post_meta($order_get_id, 'send_api_erp_invu', esc_attr(htmlspecialchars("yes")));
@@ -185,6 +195,11 @@ function armando_mi_variables($order_get_id = "")
     status
      */
 
+     if(isset($_GET['orden_prueba'])){
+         //return "holas!";
+
+     }
+
     $order_id = $order_get_id;
 
     //$order_id = 84;
@@ -193,7 +208,79 @@ function armando_mi_variables($order_get_id = "")
 
     //print_r($order);
 
+    // $la_orden = $order->get_line_tax();
+
+
+    // echo count($order->tax_lines);
+    // echo "<h1>Viene==></h1>";
+    // print_r($order->get_line_tax());
+
+    // echo "<br><br>";
+
+
+
+    // echo "<br><br><br>";
+
     //$order->get_total();
+
+    /**
+     * SECCION DE CODIGO filthyfridaybocas tax_lines
+     */
+    $filthyfridaybocas = 1;
+    $impuestosfilthyfridaybocas = 0;
+
+    if($filthyfridaybocas == 1){
+        //AQUI ENTONCES DEBEMOS SACAR LOS DOS IMPUESTOS
+
+        //print_r($order->get_line_tax());
+        //$el_line_tax = json_encode($order->get_tax_lines());
+
+        // Iterating through order fee items ONLY
+        foreach( $order->get_items('fee') as $item_id => $item_fee ){
+
+            // The fee name
+            $fee_name = $item_fee->get_name();
+
+            //echo "<h1>{$fee_name}</h1>";
+
+            // The fee total amount
+            $fee_total = $item_fee->get_total();
+
+            //echo "<h1>{$fee_total}</h1>";
+
+            // The fee total tax amount
+            $fee_total_tax = $item_fee->get_total_tax();
+
+            //echo "<h1>{$fee_total_tax}</h1>";
+
+
+            if($fee_name == "Handling Fee"){
+                $impuestosfilthyfridaybocas = (float)$impuestosfilthyfridaybocas + (float)$fee_total;
+            }
+        }
+
+        //TAX
+        foreach( $order->get_items('tax') as $item_id => $item_fee ){
+
+            // The fee name
+            $rate_code = $item_fee->get_rate_code();
+
+            //echo "<h1>{$rate_code}</h1>";
+
+            // The fee total amount
+            $tax_total = $item_fee->get_tax_total();
+
+            //echo "<h1>{$tax_total}</h1>";
+
+            // // The fee total tax amount
+            // $fee_total_tax = $item_fee->get_total_tax();
+
+            // echo "<h1>{$fee_total_tax}</h1>";
+
+            if($rate_code == "SERVICE FEE-1"){
+                $impuestosfilthyfridaybocas = (float)$impuestosfilthyfridaybocas + (float)$tax_total;
+            }
+        }
 
     //AHORA ASIGNAMOS LOS PRODUCTOS
 
@@ -283,13 +370,15 @@ function armando_mi_variables($order_get_id = "")
         //     'price'          => $price,
         //     'metaDataOrders' => []
         // );
+        
 
         $variable_productos = array(
             "item" => array(
                 "precio"    => $price,
                 "codigo"    => $sku,
                 "nombre"    => $name,
-                "tax"       => $total_tax
+                //"tax"       => $tax
+                "tax"       => 7
             ),
             "gift"  => false,
             "cantidad" => $quantity,
@@ -298,6 +387,29 @@ function armando_mi_variables($order_get_id = "")
         array_push($array_productos, $variable_productos);
 
     }
+
+    
+
+
+        //echo "<h1>El total del producto TAX es: {$impuestosfilthyfridaybocas}</h1>";
+
+
+        $variable_productos = array(
+            "item" => array(
+                "precio"    => $impuestosfilthyfridaybocas,
+                "codigo"    => "SER001",
+                "nombre"    => "Service Fee",
+                "tax"       => null
+            ),
+            "gift"  => false,
+            "cantidad" => 1,
+        );
+
+        array_push($array_productos, $variable_productos);
+    }
+
+
+
     //$datos_productos = substr_replace($datos_productos, '', -1); // to get rid of extra comma
     $datos_productos .= "]";
 
@@ -380,6 +492,7 @@ function armando_mi_variables($order_get_id = "")
     );
 
     $json = json_encode($data);
+    
 
     //$order->get_payment_method()
 
@@ -465,7 +578,38 @@ function armando_mi_variables($order_get_id = "")
     //VARIABLES DE INVU
 
     //echo "<h1>{$json}</h1>";
-    return $data;
+    if(isset($_GET['orden_prueba'])){
+        //echo "<h1>{$json}</h1>";
+        return $data;
+        
+        
+    }else{
+        return $data;
+    }
+    
+    
+}
+
+/**
+ * TRANSACCION DE PRUEBA
+ */
+
+
+
+add_action("wp_footer", "ordenes_de_prueba");
+function ordenes_de_prueba(){
+    //return "si pasamos!";
+    if(isset($_GET['orden_prueba'])){
+
+        //echo "<h1>ESTAMOS EN LA ORDEN DE PRUEBA!</h1>";
+        $orden_prueba = $_GET['orden_prueba'];
+        //armando_mi_variables($orden_prueba);
+
+
+        //CON ESTE ENVIAMOS DE UNA A INVU
+        sen_order_api_invu_pos($orden_prueba);
+
+    }
     
 }
 
