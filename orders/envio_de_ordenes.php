@@ -229,6 +229,8 @@ function armando_mi_variables($order_get_id = "")
     $filthyfridaybocas = 1;
     $impuestosfilthyfridaybocas = 0;
 
+    $handling_Fee = 0;
+
     if($filthyfridaybocas == 1){
         //AQUI ENTONCES DEBEMOS SACAR LOS DOS IMPUESTOS
 
@@ -256,6 +258,8 @@ function armando_mi_variables($order_get_id = "")
 
             if($fee_name == "Handling Fee"){
                 $impuestosfilthyfridaybocas = (float)$impuestosfilthyfridaybocas + (float)$fee_total;
+
+                $handling_Fee++;
             }
         }
 
@@ -393,6 +397,14 @@ function armando_mi_variables($order_get_id = "")
 
         //echo "<h1>El total del producto TAX es: {$impuestosfilthyfridaybocas}</h1>";
 
+        $tax_ser001 = null;
+
+        if($handling_Fee == 0){
+            $tax_ser001 =  number_format($impuestosfilthyfridaybocas*7/100 ,2);
+
+            //SUMAMOS ESTE IMPUESTO
+            $impuestosfilthyfridaybocas = (float)$impuestosfilthyfridaybocas + (float)$tax_ser001;
+        }
 
         $variable_productos = array(
             "item" => array(
